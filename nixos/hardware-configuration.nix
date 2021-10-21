@@ -5,8 +5,7 @@
 
 {
   imports =
-    [ (modulesPath + "/hardware/network/broadcom-43xx.nix")
-      (modulesPath + "/installer/scan/not-detected.nix")
+    [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
@@ -15,17 +14,23 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f11440cc-c49a-44da-affc-4a7ca3aecd91";
+    { device = "/dev/disk/by-uuid/e41caf35-67ee-4de7-83f8-767c41c87435";
       fsType = "xfs";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0992-92A3";
+    { device = "/dev/disk/by-uuid/3ED1-98CB";
       fsType = "vfat";
+    };
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/ddd7ddc3-b7a5-49d2-8e34-7d921d32bd7c";
+      fsType = "xfs";
     };
 
   swapDevices = [ ];
 
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;
 }
