@@ -134,6 +134,13 @@
     virt-manager
   ];
 
+  services.udev.extraRules = ''
+    KERNEL=="ttyUSB[0-9]*", MODE="0666"
+    KERNEL=="ttyACM[0-9]*", MODE="0666"
+
+    KERNEL=="sd[d-f]*",     MODE="0666"
+  '';
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
