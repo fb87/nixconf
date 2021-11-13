@@ -8,11 +8,18 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+
+     # run 2 below commands to add home-manager to store first
+     # nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+     # nix-channel --update
+      <home-manager/nixos>
     ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.kernelParams = [ "vga=ask" ];
 
   boot.initrd.luks.devices = {
     nixos-sda = {
@@ -22,7 +29,7 @@
     };
   };
 
-  fileSystems."/data" =
+  fileSystems."/home/data" =
   { 
     device = "/dev/disk/by-uuid/cf8294db-10c3-4636-96d8-a9dce35ca680";
     fsType = "ext4";
@@ -58,6 +65,11 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
+  i18n.inputMethod = {
+    enabled = "fcitx";
+    fcitx.engines = with pkgs.fcitx-engines; [ unikey ];
+  };
+
   console = {
     font = "Lat2-Terminus16";
     keyMap = "us";
@@ -65,38 +77,44 @@
 
   services.xserver.enable = true;
   # Enable the GNOME 3 Desktop Environment.
-  # services.xserver.displayManager.gdm.enable = true;
+
+  hardware.nvidia.modesetting.enable = true;
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    wayland = true;
+    nvidiaWayland = true;
+  };
   # services.xserver.desktopManager.gnome.enable = true;
+
+  # services.xserver.desktopManager.plasma5.enable = true;
+  # services.xserver.displayManager.sddm.enable = true;
+
   services.xserver.desktopManager.xfce.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.displayManager.lightdm.enable = true;
 
-  services.xserver.displayManager.lightdm.greeters.mini = {
-    enable = true;
-    user = "dao";
-    extraConfig = ''
-      [greeter]
-      show-password-label = true
-      password-alignment = center
-      [greeter-theme]
-      font = NanumGothicCoding
-      background-image = ""
-    '';
-  };
+  # services.xserver.displayManager.defaultSession = "xfce";
 
-  services.picom = {
-    enable = true;
-    fade = true;
-    inactiveOpacity = 0.9;
-    shadow = true;
-    fadeDelta = 4;
-  };
+  # services.xserver.displayManager.lightdm.greeters.tiny = {
+  #   enable = false;
+  # };
+  # services.xserver.displayManager.lightdm.greeters.mini = {
+  #   enable = true;
+  #   user = "dao";
+  #   extraConfig = ''
+  #     [greeter]
+  #     show-password-label = true
+  #     password-alignment = center
+  #     [greeter-theme]
+  #     font = NanumGothicCoding
+  #     background-image = ""
+  #   '';
+  # };
 
   # enable qtile
   # services.xserver.displayManager.startx.enable = true;
   # services.xserver.windowManager.qtile.enable = true;
   
   services.xserver.videoDrivers = ["nvidia"];
-  nixpkgs.config.allowNonfree = true;
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -115,6 +133,11 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
 	dao = {
+	    isNormalUser = true;
+	    extraGroups = [ "libvirtd" ];
+	};
+
+	user = {
 	    isNormalUser = true;
 	    extraGroups = [ "libvirtd" ];
 	};
