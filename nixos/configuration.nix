@@ -79,8 +79,9 @@
   # Enable the GNOME 3 Desktop Environment.
 
   hardware.nvidia.modesetting.enable = true;
+  services.xserver.displayManager.startx.enable = true;
   services.xserver.displayManager.gdm = {
-    enable = true;
+    enable = false;
     wayland = true;
     nvidiaWayland = true;
   };
@@ -89,10 +90,11 @@
   # services.xserver.desktopManager.plasma5.enable = true;
   # services.xserver.displayManager.sddm.enable = true;
 
-  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.windowManager.qtile.enable = true;
+  # services.xserver.desktopManager.xfce.enable = true;
   # services.xserver.displayManager.lightdm.enable = true;
 
-  # services.xserver.displayManager.defaultSession = "xfce";
+  services.xserver.displayManager.defaultSession = "qtile";
 
   # services.xserver.displayManager.lightdm.greeters.tiny = {
   #   enable = false;
